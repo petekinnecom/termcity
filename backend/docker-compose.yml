@@ -1,0 +1,13 @@
+version: '3.2'
+services:
+  test:
+    image: test
+    command: sh -c 'wait-for-it mysql:3306 && MIX_ENV=test mix do ecto.setup, test'
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+  mysql:
+    image: percona:5.6
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
