@@ -1,0 +1,115 @@
+#! /usr/bin/env ruby
+require 'base64'
+require 'yaml'
+require "termcity/cli"
+require "optparse"
+require "uri"
+
+HELP = <<~TXT
+  Run termcity to see your test results on TeamCity:
+
+  termcity --branch myBranchName --project MyProjectId
+
+  [Options]
+
+  -b, --branch: defaults to current repo branch
+  -p, --project: defaults to camelcasing repo directory
+
+  [CREDENTIALS]:
+
+  The backend uses your Github organization memberships to verify your
+  access to the data. You must configure the CLI with a token granting
+  it access to read your org memberships:
+
+  1. Visit https://github.com/settings/tokens/new
+  2. Generate a new token
+  3. Only grant the `read:org` permission (leave all others unchecked)
+  4. Paste the token in the configuration file as specified below.
+
+  [CONFIGURATION]
+  Put a json formatted file at ~/.termcity with the following data:
+
+    {
+      "host":  "https://my.termcity.api.com",
+      "token": "your github auth token"
+    }
+
+  [OUTPUT]
+
+  Builds are listed in alphabetical order. Builds that have a result for
+  the latest revision but are also re-enqueued have a ",q" next to them.
+  For example, "failed,q" means the latest build on the branch has
+  failed, but it is enqueued to run again.
+TXT
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: termcity [options]"
+
+  opts.on("-b BRANCH", "--branch BRANCH", "git branch (defaults to current repo branch)") do |b|
+    options[:branch] = b
+  end
+
+  opts.on("-p PROJECT_ID", "--project PROJECT_ID", "The project id (defaults to fuzzy-matching on repo directory)") do |p|
+    options[:project_id] = p
+  end
+
+  opts.on("-h", "--help", "See help") do
+    puts HELP
+    exit(0)
+  end
+
+end.parse!
+
+if ARGV.any?
+  puts HELP
+  exit(1)
+end
+
+if !options[:branch]
+  options[:branch] = `git rev-parse --abbrev-ref @`.chomp
+  if $? != 0
+    warn "Could not identify branch. Please specify one"
+    exit(1)
+  end
+end
+
+if !options[:project_id]
+  root_dir =
+    `git rev-parse --show-toplevel`
+      .chomp
+      .tap { raise "detecting root dir failed" unless $?==0}
+
+  camelcase_root_dir =
+    File
+    .basename(root_dir)
+    .sub(/^[a-z\d]*/) { $&.capitalize }
+    .gsub(/(?:_|(\/))([a-z\d]*)/) { $2.capitalize }
+
+  options[:project_id] = camelcase_root_dir
+end
+
+creds_file = File.expand_path("~/.termcity")
+if !File.exist?(creds_file)
+  warn "Could not find a credentials file. See --help for info."
+  exit(1)
+end
+
+yaml = YAML.load_file(creds_file)
+
+if yaml["host"].nil?
+  warn "Could not find `host` in credentials file. See --help for more info"
+  exit(1)
+end
+
+if yaml["token"].nil?
+  warn "Could not find `token` in credentials file. See --help for more info"
+  exit(1)
+end
+
+Termcity::CLI.simple_format(
+  token: yaml["token"],
+  host: yaml["host"],
+  branch: options[:branch],
+  project_id: options[:project_id]
+)
