@@ -5,6 +5,7 @@ defmodule TcCache.Application do
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec
+    import Cachex.Spec
 
     # Define workers and child supervisors to be supervised
     children = [
@@ -13,6 +14,7 @@ defmodule TcCache.Application do
       # Start the endpoint when the application starts
       supervisor(TcCacheWeb.Endpoint, []),
       supervisor(Task.Supervisor, [[name: TcCache.TaskSupervisor]]),
+      worker(Cachex, [:tc, [expiration: expiration(default: :timer.seconds(60 * 60 * 4))]]),
       worker(TcCache.Sync.Scheduler, [
         [
           {TcCache.Sync, :sync_builds, ["running", 1_000], 60 * 1_000},

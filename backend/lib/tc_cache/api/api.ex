@@ -1,6 +1,15 @@
 defmodule TcCache.Api do
   # currently we just hit github
-  def authenticate(token), do: TcCache.Source.authenticate(token)
+  def authenticate(token) do
+    if Cachex.exists?(:tc, token) do
+      {:ok, true}
+    else
+      case TcCache.Source.authenticate(token) do
+        {:ok, _} -> {:ok, Cachex.put!(:tc, token, true)}
+        {:error, msg} -> {:error, msg}
+      end
+    end
+  end
 
   def build_info(project_id, branch, revision, build_info \\ &TcCache.Store.build_info/3) do
     builds = build_info.(project_id, branch, revision)
