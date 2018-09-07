@@ -3,13 +3,11 @@ defmodule TcCache.Sync do
 
   alias TcCache.Source
   alias TcCache.Store
-  @build_sync_count 3_000
-
   @expiration_seconds -60 * 60 * 24 * 7
 
-  def sync_builds(count \\ @build_sync_count) do
-    Logger.info("#{__MODULE__}.sync_builds triggered")
-    {:ok, builds} = Source.fetch_builds(count)
+  def sync_builds(state, count) do
+    Logger.info("#{__MODULE__}.sync_builds triggered with [#{state}, #{count}]")
+    {:ok, builds} = Source.fetch_builds(state, count)
 
     builds
     |> Enum.map(&extract_build_keys/1)
@@ -20,6 +18,7 @@ defmodule TcCache.Sync do
 
   def expire_builds(now \\ NaiveDateTime.utc_now()) do
     Logger.info("#{__MODULE__}.expire_builds triggered")
+
     now
     |> NaiveDateTime.add(@expiration_seconds)
     |> Store.expire_builds()

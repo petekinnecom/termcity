@@ -120,7 +120,7 @@ defmodule TcCache.SourceTest do
 
     get = dummy_get(200, headers, body, options)
 
-    assert {:ok, ^builds} = Source.fetch_builds(100, get)
+    assert {:ok, ^builds} = Source.fetch_builds("queued", 100, get)
   end
 
   test "fetch_build: single buildTypes" do
@@ -141,7 +141,7 @@ defmodule TcCache.SourceTest do
 
     get = dummy_get(200, headers, body, options)
 
-    assert {:ok, [^build]} = Source.fetch_builds(100, get)
+    assert {:ok, [^build]} = Source.fetch_builds("queued", 100, get)
   end
 
   test "fetch_build: connection failure" do
@@ -151,7 +151,7 @@ defmodule TcCache.SourceTest do
 
     get = dummy_get(401, headers, body, options)
 
-    assert {:error, :server_not_happy} = Source.fetch_builds(100, get)
+    assert {:error, :server_not_happy} = Source.fetch_builds("queued", 100, get)
   end
 
   defp dummy_get(code, headers, body, options \\ []) do

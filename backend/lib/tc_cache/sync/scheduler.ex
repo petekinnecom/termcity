@@ -1,6 +1,7 @@
 defmodule TcCache.Sync.Scheduler do
   use GenServer
   alias Scheduler
+  require Logger
 
   def start_link(jobs) do
     GenServer.start_link(__MODULE__, jobs)
@@ -15,9 +16,10 @@ defmodule TcCache.Sync.Scheduler do
     end
   end
 
-  def handle_info({mod, fun, delay_ms}, state) do
-    spawn(fn -> apply(mod, fun, []) end)
-    schedule([{mod, fun, delay_ms}])
+  def handle_info(job = {mod, fun, args, _delay_ms}, state) do
+    Logger.info("Triggering job: #{inspect(job)}")
+    spawn(fn -> apply(mod, fun, args) end)
+    schedule([job])
     {:noreply, state}
   end
 
@@ -26,7 +28,8 @@ defmodule TcCache.Sync.Scheduler do
     schedule(tail)
   end
 
-  defp schedule(job = {_mod, _fun, delay_ms}) do
+  defp schedule(job = {_mod, _fun, _args, delay_ms}) do
+    Logger.info("Scheduling job: #{inspect(job)}")
     Process.send_after(self(), job, delay_ms)
   end
 

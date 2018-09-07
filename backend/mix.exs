@@ -42,8 +42,7 @@ defmodule TcCache.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:httpoison, "~> 1.0"},
-      {:plug_heartbeat, "~> 0.1"},
-      {:ex_syslogger, "1.4.0"}
+      {:ex_syslogger, "~> 1.4"}
     ]
   end
 

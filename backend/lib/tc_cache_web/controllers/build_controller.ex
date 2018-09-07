@@ -22,6 +22,7 @@ defmodule TcCacheWeb.BuildController do
           {:ok, _} ->
             Logger.info("Valid token. Returning info for #{project_id}, #{branch}")
             json(conn, Task.await(build_info_task))
+
           _ ->
             Logger.info("Access Denied: invalid token")
             send_resp(conn, 401, "Not allowed")

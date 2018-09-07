@@ -12,15 +12,16 @@ defmodule TcCache.Source do
     defstruct @keys
   end
 
-  def fetch_builds(count, get \\ &HTTPoison.get!/3) do
-    locators = %{
-      count: count,
-      failedToStart: "any",
-      defaultFilter: false,
-      lookupLimit: count
-    }
-
+  def fetch_builds(state, count, get \\ &HTTPoison.get!/3) do
     cfg = config()
+
+    locators = %{
+      state: state,
+      count: count,
+      lookupLimit: count,
+      failedToStart: "any",
+      defaultFilter: false
+    }
 
     get.(
       join(cfg.host, builds_path(cfg.host, locators)),
