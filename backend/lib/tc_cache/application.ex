@@ -17,9 +17,7 @@ defmodule TcCache.Application do
       worker(Cachex, [:tc, [expiration: expiration(default: :timer.seconds(60 * 60 * 4))]]),
       worker(TcCache.Sync.Scheduler, [
         [
-          {TcCache.Sync, :sync_builds, ["running", 1_000], 60 * 1_000},
-          {TcCache.Sync, :sync_builds, ["finished", 1_000], 60 * 1_000},
-          {TcCache.Sync, :sync_builds, ["queued", 3_000], 60 * 1_000},
+          {TcCache.Sync, :sync_build_states, [], 60 * 1_000},
           {TcCache.Sync, :sync_build_types, [], 60 * 60 * 1_000},
           {TcCache.Sync, :expire_builds, [], 60 * 60 * 24 * 1_000}
         ]

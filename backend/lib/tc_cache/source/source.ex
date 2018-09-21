@@ -2,9 +2,17 @@ defmodule TcCache.Source do
   alias TcCache.Source.Authentication
   alias TcCache.Source.BuildTypes
   alias TcCache.Source.Builds
+  require Logger
 
   @github_org_path "https://api.github.com/user/orgs"
   @build_types_path "app/rest/buildTypes"
+
+  @default_locators %{
+    count: 5000,
+    branch: "(default:any)",
+    failedToStart: "any",
+    defaultFilter: false
+  }
 
   defmodule Config do
     @keys [:host, :username, :password]
@@ -12,16 +20,10 @@ defmodule TcCache.Source do
     defstruct @keys
   end
 
-  def fetch_builds(state, count, get \\ &HTTPoison.get!/3) do
+  def fetch_builds(psuedo_locators, get \\ &HTTPoison.get!/3) do
     cfg = config()
-
-    locators = %{
-      state: state,
-      count: count,
-      lookupLimit: count,
-      failedToStart: "any",
-      defaultFilter: false
-    }
+    locators = build_locators(psuedo_locators)
+    Logger.info("fetching builds with locators: #{inspect(locators)}")
 
     get.(
       join(cfg.host, builds_path(cfg.host, locators)),
@@ -43,6 +45,61 @@ defmodule TcCache.Source do
     )
     |> BuildTypes.process()
   end
+
+  @doc """
+    Builds a locator struct for fetching builds.
+
+    Convenience keys:
+      since: NaiveDateTime (can only be specified if 'state:' is passed)
+
+    ## Examples
+
+        iex> TcCache.Source.build_locators(%{state: "finished", since: ~N[2000-01-01 23:00:07], count: 300, lookupLimit: 5000})
+        %{
+          branch: "(default:any)",
+          count: 300,
+          defaultFilter: false,
+          failedToStart: "any",
+          state: "finished",
+          finishDate: "(date:20000101T230007%2B0000,condition:after)",
+          lookupLimit: 5000,
+        }
+
+        iex> TcCache.Source.build_locators(%{count: 300})
+        %{
+          branch: "(default:any)",
+          count: 300,
+          defaultFilter: false,
+          failedToStart: "any"
+        }
+
+  """
+  def build_locators(locators = %{state: "queued", since: since}) do
+    locators
+    |> Map.put(:queuedDate, ndt_to_tc(since))
+    |> Map.delete(:since)
+    |> build_locators()
+  end
+
+  def build_locators(locators = %{state: "finished", since: since}) do
+    locators
+    |> Map.put(:finishDate, ndt_to_tc(since))
+    |> Map.delete(:since)
+    |> build_locators()
+  end
+
+  def build_locators(locators = %{state: "running", since: since}) do
+    locators
+    |> Map.put(:startDate, ndt_to_tc(since))
+    |> Map.delete(:since)
+    |> build_locators()
+  end
+
+  def build_locators(%{since: _since}) do
+    raise "Invalid locators: can't pass 'since' key without 'state' key"
+  end
+
+  def build_locators(l), do: Enum.into(l, @default_locators)
 
   def authenticate(token, get \\ &HTTPoison.get!/3) do
     get.(
@@ -76,4 +133,17 @@ defmodule TcCache.Source do
       password: Application.get_env(:tc_cache, TcCache.Source)[:password]
     }
   end
+
+  defp ndt_to_tc(ndt = %NaiveDateTime{}) do
+    ndt
+    |> NaiveDateTime.to_iso8601()
+    |> String.replace(~r[\.\d+], "") # don't use NaiveDateTime.truncate because it doesn't work on older elixir version
+    |> String.replace("-", "")
+    |> String.replace(":", "")
+    |> append_tz()
+    |> to_tc_date_condition()
+  end
+
+  defp append_tz(s), do: "#{s}%2B0000"
+  defp to_tc_date_condition(s), do: "(date:#{s},condition:after)"
 end

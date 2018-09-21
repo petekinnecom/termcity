@@ -57,3 +57,5 @@ config :tc_cache, TcCache.Repo,
   pool_size: 10
 
 config :tc_cache, TcCache.Sync.Scheduler, enabled: false
+
+import_config "#{Mix.env()}.secret.exs"

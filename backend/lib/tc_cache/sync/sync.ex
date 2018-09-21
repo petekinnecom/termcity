@@ -2,12 +2,28 @@ defmodule TcCache.Sync do
   require Logger
 
   alias TcCache.Source
+  alias TcCache.Sync
   alias TcCache.Store
   @expiration_seconds -60 * 60 * 24 * 7
+  @sync_builds_since_seconds -60 * 20
 
-  def sync_builds(state, count) do
-    Logger.info("#{__MODULE__}.sync_builds triggered with [#{state}, #{count}]")
-    {:ok, builds} = Source.fetch_builds(state, count)
+  def sync_build_states do
+    Sync.sync_builds(%{state: "running"})
+    Sync.sync_builds(%{state: "finished"})
+    Sync.sync_builds(%{state: "queued"})
+  end
+
+  def sync_builds(locators) do
+    Logger.info("#{__MODULE__}.sync_builds triggered with #{inspect(locators)}")
+
+    default_since =
+      NaiveDateTime.utc_now()
+      |> NaiveDateTime.add(@sync_builds_since_seconds, :second)
+
+    {:ok, builds} =
+      locators
+      |> Enum.into(%{since: default_since})
+      |> Source.fetch_builds()
 
     builds
     |> Enum.map(&extract_build_keys/1)
