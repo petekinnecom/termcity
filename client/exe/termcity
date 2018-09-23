@@ -14,6 +14,7 @@ HELP = <<~TXT
 
   -b, --branch: defaults to current repo branch
   -p, --project: defaults to camelcasing repo directory
+  -r, --revision: defaults to latest revision known to CI
 
   [CREDENTIALS]:
 
@@ -50,8 +51,17 @@ OptionParser.new do |opts|
     options[:branch] = b
   end
 
-  opts.on("-p PROJECT_ID", "--project PROJECT_ID", "The project id (defaults to fuzzy-matching on repo directory)") do |p|
+  opts.on("-p PROJECT_ID", "--project PROJECT_ID", "The project id (defaults to camelCasing on repo directory)") do |p|
     options[:project_id] = p
+  end
+
+  opts.on("-r REVISION", "--revision REVISION", "The git revision to look for (defaults to revision of latest test run)") do |r|
+    options[:revision] = r
+
+    if !r.match(/\h{40}/)
+      warn("#{r} is not a full/valid git revision")
+      exit(1)
+    end
   end
 
   opts.on("-h", "--help", "See help") do
@@ -111,5 +121,6 @@ Termcity::CLI.simple_format(
   token: yaml["token"],
   host: yaml["host"],
   branch: options[:branch],
+  revision: options[:revision],
   project_id: options[:project_id]
 )

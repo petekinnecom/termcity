@@ -38,12 +38,7 @@ module Termcity
           cols.join(" : ")
         end
 
-        @io.puts(
-          [
-            header(summary),
-            rows
-          ].join("\n")
-        )
+        @io.puts(summarize(summary, rows))
       end
 
       def status_string(type:, re_enqueued:)
@@ -54,12 +49,19 @@ module Termcity
         colorize(name.ljust(10), color)
       end
 
-      def header(summary)
-        [
-          "Revision: #{summary.builds.first.dig(:raw, "sha")}",
-          counts(summary),
-          "",
-        ].join("\n")
+      def summarize(summary, rows)
+        if summary.builds.empty?
+          "No builds found"
+        elsif summary.counts[:queued] == summary.counts[:total]
+          "This revision may still be in the queue (or may be unkown/old)"
+        else
+          [
+            "Revision: #{summary.builds.first.dig(:raw, "sha")}",
+            counts(summary),
+            "",
+            rows
+          ].join("\n")
+        end
       end
 
       def counts(summary)

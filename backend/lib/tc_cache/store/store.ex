@@ -22,6 +22,10 @@ defmodule TcCache.Store do
     end
   end
 
+  def build_info(project_id, branch_name, revision) do
+    build_info_query(project_id, branch_name, revision)
+  end
+
   # if build_number is nil then we are only searching for queued builds
   def build_info_query(project_id, branch_name, build_number) do
     # this could be turned into a sub-query

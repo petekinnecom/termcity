@@ -19,8 +19,10 @@ module Termcity
       @host = host
     end
 
-    def builds(branch:, project_id:)
-      url = URI.join(@host, "/builds?branch=#{branch}&project_id=#{project_id}").to_s
+    def builds(branch:, project_id:, revision:)
+      path = "/builds?branch=#{branch}&project_id=#{project_id}"
+      path = "#{path}&revision=#{revision}" if revision
+      url = URI.join(@host, path).to_s
       get(url)
     end
 

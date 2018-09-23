@@ -10,11 +10,12 @@ module Termcity
       new(**args).simple_format
     end
 
-    def initialize(branch:, token:, host:, project_id:)
+    def initialize(branch:, token:, host:, project_id:, revision:)
       @branch = branch
       @token = token
       @host = host
       @project_id = project_id
+      @revision = revision
     end
 
     def simple_format
@@ -26,6 +27,7 @@ module Termcity
       summary = Termcity::Summary.new(
         api: api,
         branch: @branch,
+        revision: @revision,
         project_id: @project_id,
       )
 

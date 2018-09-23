@@ -19,12 +19,7 @@ module Termcity
           cols.join(" ")
         end
 
-        @io.puts(
-          [
-            simple_formatter.header(summary),
-            rows
-          ].join("\n")
-        )
+        @io.puts(simple_formatter.summarize(summary, rows))
       end
 
       def linkify(url)
