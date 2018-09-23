@@ -14,51 +14,65 @@ module Termcity
         success: "success"
       }
 
+      COLORS = {
+        failing: :red,
+        queued: :yellow,
+        running: :blue,
+        failed_to_start: :default,
+        failed: :red,
+        success: :green
+      }
+
       attr_reader :io
       def initialize(io)
         @io = io
       end
 
       def format(summary)
-        summary.builds.each do |build|
+        rows = summary.builds.map do |raw:, status:|
           cols = []
+          cols << status_string(status)
+          cols << raw.fetch("build_type")
+          cols << raw.fetch("web_url")
 
-          cols << status(build)
-          cols << build.fetch("build_type")
-          cols << build.fetch("web_url")
-
-          io.puts(cols.join(" : "))
+          cols.join(" : ")
         end
+
+        @io.puts(
+          [
+            header(summary),
+            rows
+          ].join("\n")
+        )
       end
 
-      def status(build)
-        re_enqueued = build.fetch("re_enqueued")
+      def status_string(type:, re_enqueued:)
+        name = STATUSES.fetch(type)
+        name = "#{name},q" if re_enqueued
+        color = COLORS[type]
 
-        if build.fetch("state") == "queued"
-          yellow(status_name(:queued))
-        elsif build.fetch("state") == "running"
-          if build.fetch("status") == "FAILURE"
-            red(status_name(:failing, re_enqueued: re_enqueued))
-          else
-            blue(status_name(:running, re_enqueued: re_enqueued))
-          end
-        else
-          if build.fetch("failedToStart", false)
-            status_name(:failed_to_start, re_enqueued: re_enqueued)
-          elsif build.fetch("status") == "FAILURE"
-            red(status_name(:failed, re_enqueued: re_enqueued))
-          else
-            green(status_name(:success, re_enqueued: re_enqueued))
-          end
-        end
+        colorize(name.ljust(10), color)
       end
 
-      def status_name(type, re_enqueued: false)
-        if re_enqueued
-          "#{STATUSES.fetch(type)},q".ljust(10)
-        else
-          STATUSES.fetch(type).ljust(10)
-        end
+      def header(summary)
+        [
+          "Revision: #{summary.builds.first.dig(:raw, "sha")}",
+          counts(summary),
+          "",
+        ].join("\n")
+      end
+
+      def counts(summary)
+        [
+          ["Total", summary.counts[:total]],
+          ["Success", summary.counts[:success]],
+          ["failure", summary.counts[:failure]],
+          ["Running", summary.counts[:running]],
+          ["Queued", summary.counts[:queued]],
+          ["Re-Queued", summary.counts[:re_enqueued]]
+        ]
+          .map {|name, count| "#{name}: #{count}"}
+          .join(", ")
       end
     end
   end
