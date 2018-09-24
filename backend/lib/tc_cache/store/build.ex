@@ -10,7 +10,7 @@ defmodule TcCache.Store.Build do
     field(:tc_state, :string)
     field(:tc_status, :string)
     field(:tc_web_url, :string)
-    field(:tc_failed_to_start, :boolean)
+    field(:tc_failed_to_start, :boolean, default: false)
 
     timestamps()
   end

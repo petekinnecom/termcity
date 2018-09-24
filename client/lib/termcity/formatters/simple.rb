@@ -69,8 +69,9 @@ module Termcity
         [
           ["Total", summary.counts[:total]],
           ["Success", summary.counts[:success]],
-          ["failure", summary.counts[:failure]],
+          ["Failure", summary.counts[:failure]],
           ["Running", summary.counts[:running]],
+          ["FailedToStart", summary.counts[:failed_to_start]],
           ["Queued", summary.counts[:queued]],
           ["Re-Queued", summary.counts[:re_enqueued]]
         ]

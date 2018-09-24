@@ -137,7 +137,8 @@ defmodule TcCache.Source do
   defp ndt_to_tc(ndt = %NaiveDateTime{}) do
     ndt
     |> NaiveDateTime.to_iso8601()
-    |> String.replace(~r[\.\d+], "") # don't use NaiveDateTime.truncate because it doesn't work on older elixir version
+    # don't use NaiveDateTime.truncate because it doesn't work on older elixir version
+    |> String.replace(~r[\.\d+], "")
     |> String.replace("-", "")
     |> String.replace(":", "")
     |> append_tz()

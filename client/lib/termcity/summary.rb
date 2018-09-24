@@ -28,6 +28,7 @@ module Termcity
           failure: 0,
           running: 0,
           queued: 0,
+          failed_to_start: 0,
           re_enqueued: 0,
         }
 
@@ -76,7 +77,7 @@ module Termcity
           {type: :running, re_enqueued: re_enqueued}
         end
       else
-        if build.fetch("failedToStart", false)
+        if build.fetch("failed_to_start", false)
           {type: :failed_to_start, re_enqueued: re_enqueued}
         elsif build.fetch("status") == "FAILURE"
           {type: :failed, re_enqueued: re_enqueued}

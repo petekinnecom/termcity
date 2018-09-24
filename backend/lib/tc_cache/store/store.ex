@@ -73,6 +73,7 @@ defmodule TcCache.Store do
           status: b.tc_status,
           state: b.tc_state,
           web_url: b.tc_web_url,
+          failed_to_start: b.tc_failed_to_start,
           build_type: bt.tc_name,
           project_name: bt.tc_project_name
         }
