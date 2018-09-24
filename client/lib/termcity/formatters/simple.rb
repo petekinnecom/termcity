@@ -56,10 +56,11 @@ module Termcity
           "This revision may still be in the queue (or may be unkown/old)"
         else
           [
-            "Revision: #{summary.builds.first.dig(:raw, "sha")}",
-            counts(summary),
+            rows,
             "",
-            rows
+            "Revision: #{summary.builds.first.dig(:raw, "sha")}",
+            "Overview: #{summary.overview_link}",
+            counts(summary),
           ].join("\n")
         end
       end

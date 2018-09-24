@@ -15,6 +15,10 @@ module Termcity
       data[:counts]
     end
 
+    def overview_link
+      data.dig(:links, :overview)
+    end
+
     def data
       # this is messy but allows for a single pass
       @data ||= begin
@@ -27,11 +31,14 @@ module Termcity
           re_enqueued: 0,
         }
 
-        builds = @api.builds(branch: @branch, project_id: @project_id, revision: @revision)
+        summary = @api.summary(branch: @branch, project_id: @project_id, revision: @revision)
+
+        builds = summary.fetch("builds")
           .sort_by {|b| b.fetch("build_type")}
           .map {|b| summarize(b, counts) }
 
         {
+          links: {overview: summary.dig("links", "overview")},
           builds: builds,
           counts: counts
         }
