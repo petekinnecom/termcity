@@ -14,11 +14,16 @@ defmodule TcCache.Api do
   def build_info(project_id, branch, revision, build_info \\ &TcCache.Store.build_info/3) do
     builds = build_info.(project_id, branch, revision)
 
-    builds
-    |> Enum.map(fn b -> b.build_type end)
-    |> Enum.uniq()
-    |> Enum.map(fn bt -> build_result(bt, builds) end)
-    |> Enum.sort_by(fn b -> b.id end)
+    links = %{overview: overview_link(project_id, branch)}
+
+    builds_data =
+      builds
+      |> Enum.map(fn b -> b.build_type end)
+      |> Enum.uniq()
+      |> Enum.map(fn bt -> build_result(bt, builds) end)
+      |> Enum.sort_by(fn b -> b.id end)
+
+    %{builds: builds_data, links: links}
   end
 
   defp build_result(build_type, builds) do
@@ -45,5 +50,13 @@ defmodule TcCache.Api do
 
   defp reduce_builds(finished, _queueds) do
     Enum.into(%{re_enqueued: true}, finished)
+  end
+
+  defp overview_link(project_id, "master"), do: overview_link(project_id, "%3Cdefault%3E")
+
+  defp overview_link(project_id, branch) do
+    Application.get_env(:tc_cache, TcCache.Source)[:host]
+    |> URI.merge("/project.html?projectId=#{project_id}&branch=#{branch}")
+    |> URI.to_string()
   end
 end

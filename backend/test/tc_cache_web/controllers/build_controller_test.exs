@@ -53,28 +53,33 @@ defmodule TcCacheWeb.BuildControllerTest do
       )
       |> json_response(200)
 
-    expected = [
-      %{
-        "build_type" => "build_type_name_1",
-        "id" => 1,
-        "project_name" => "project_name",
-        "sha" => "gitsha",
-        "state" => "running",
-        "status" => "SUCCESS",
-        "web_url" => "some tc_web_url",
-        "re_enqueued" => false
+    expected = %{
+      "links" => %{
+        "overview" => "https://example.com/project.html?projectId=project_id&branch=myBranch"
       },
-      %{
-        "build_type" => "build_type_name_2",
-        "id" => 2,
-        "project_name" => "project_name",
-        "sha" => "gitsha",
-        "state" => "running",
-        "status" => "SUCCESS",
-        "web_url" => "some tc_web_url",
-        "re_enqueued" => false
-      }
-    ]
+      "builds" => [
+        %{
+          "build_type" => "build_type_name_1",
+          "id" => 1,
+          "project_name" => "project_name",
+          "sha" => "gitsha",
+          "state" => "running",
+          "status" => "SUCCESS",
+          "web_url" => "some tc_web_url",
+          "re_enqueued" => false
+        },
+        %{
+          "build_type" => "build_type_name_2",
+          "id" => 2,
+          "project_name" => "project_name",
+          "sha" => "gitsha",
+          "state" => "running",
+          "status" => "SUCCESS",
+          "web_url" => "some tc_web_url",
+          "re_enqueued" => false
+        }
+      ]
+    }
 
     assert expected == build_info
   end

@@ -48,30 +48,33 @@ defmodule TcCache.ApiTest do
       ]
     end
 
-    expected = [
-      %{
-        id: 1,
-        sha: "gitsha",
-        status: "FAILURE",
-        state: "finished",
-        web_url: "web_url",
-        build_type: "build_type",
-        project_name: "project_name",
-        failed_to_start: false,
-        re_enqueued: true
-      },
-      %{
-        id: 4,
-        sha: nil,
-        status: nil,
-        state: "queued",
-        web_url: "web_url",
-        build_type: "build_type_2",
-        project_name: "project_name",
-        failed_to_start: false,
-        re_enqueued: false
-      }
-    ]
+    expected = %{
+      links: %{overview: "https://example.com/project.html?projectId=project_id&branch=branch"},
+      builds: [
+        %{
+          id: 1,
+          sha: "gitsha",
+          status: "FAILURE",
+          state: "finished",
+          web_url: "web_url",
+          build_type: "build_type",
+          project_name: "project_name",
+          failed_to_start: false,
+          re_enqueued: true
+        },
+        %{
+          id: 4,
+          sha: nil,
+          status: nil,
+          state: "queued",
+          web_url: "web_url",
+          build_type: "build_type_2",
+          project_name: "project_name",
+          failed_to_start: false,
+          re_enqueued: false
+        }
+      ]
+    }
 
     assert expected == Api.build_info("project_id", "branch", "revision", build_info)
   end
