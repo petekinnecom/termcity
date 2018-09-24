@@ -55,10 +55,12 @@ module Termcity
         elsif summary.counts[:queued] == summary.counts[:total]
           "This revision may still be in the queue (or may be unkown/old)"
         else
+
+          revision = summary.builds.map {|b| b.dig(:raw, "sha")}.compact.first
           [
             rows,
             "",
-            "Revision: #{summary.builds.first.dig(:raw, "sha")}",
+            "Revision: #{revision}",
             "Overview: #{summary.overview_link}",
             counts(summary),
           ].join("\n")
