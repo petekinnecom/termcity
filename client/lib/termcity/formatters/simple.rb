@@ -46,7 +46,13 @@ module Termcity
         name = "#{name},q" if re_enqueued
         color = COLORS[type]
 
-        colorize(name.ljust(10), color)
+        text =
+          if block_given?
+            yield(name)
+          else
+            name.ljust(10)
+          end
+        colorize(text, color)
       end
 
       def summarize(summary, rows)
