@@ -24,9 +24,12 @@ config :logger, :console,
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 config :tc_cache, TcCache.Teamcity.Source,
-  host: System.get_env("TC_HOST"),
-  username: System.get_env("TC_USERNAME"),
-  password: System.get_env("TC_PASSWORD")
+  host: System.get_env("TC_TEAMCITY_HOST"),
+  username: System.get_env("TC_TEAMCITY_USERNAME"),
+  password: System.get_env("TC_TEAMCITY_PASSWORD")
+
+config :tc_cache, TcCache.Circle.Source,
+  token: System.get_env("TC_CIRCLE_TOKEN")
 
 config :tc_cache, TcCache.Authentication,
   github_org: System.get_env("TC_GITHUB_ORG")
