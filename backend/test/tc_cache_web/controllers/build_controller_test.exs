@@ -10,8 +10,8 @@ defmodule TcCacheWeb.BuildControllerTest do
   end
 
   test "GET builds?mybranch with auth", %{conn: conn} do
-    TcCache.Store.upsert_builds([
-      TcCache.Fixtures.Store.build_attrs(%{
+    TcCache.Teamcity.Store.upsert_builds([
+      TcCache.Teamcity.Fixtures.Store.build_attrs(%{
         tc_id: 1,
         tc_build_type_id: "build_type_id_1",
         tc_number: "gitsha",
@@ -19,7 +19,7 @@ defmodule TcCacheWeb.BuildControllerTest do
         tc_status: "SUCCESS",
         tc_web_url: "some tc_web_url"
       }),
-      TcCache.Fixtures.Store.build_attrs(%{
+      TcCache.Teamcity.Fixtures.Store.build_attrs(%{
         tc_id: 2,
         tc_build_type_id: "build_type_id_2",
         tc_number: "gitsha",
@@ -29,14 +29,14 @@ defmodule TcCacheWeb.BuildControllerTest do
       })
     ])
 
-    TcCache.Store.upsert_build_types([
-      TcCache.Fixtures.Store.build_type_attrs(%{
+    TcCache.Teamcity.Store.upsert_build_types([
+      TcCache.Teamcity.Fixtures.Store.build_type_attrs(%{
         tc_id: "build_type_id_1",
         tc_name: "build_type_name_1",
         tc_project_id: "project_id",
         tc_project_name: "project_name"
       }),
-      TcCache.Fixtures.Store.build_type_attrs(%{
+      TcCache.Teamcity.Fixtures.Store.build_type_attrs(%{
         tc_id: "build_type_id_2",
         tc_name: "build_type_name_2",
         tc_project_id: "project_id",

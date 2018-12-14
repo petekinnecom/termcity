@@ -4,14 +4,14 @@ defmodule TcCache.Api do
     if Cachex.exists?(:tc, token) do
       {:ok, true}
     else
-      case TcCache.Source.authenticate(token) do
+      case TcCache.Teamcity.Source.authenticate(token) do
         {:ok, _} -> {:ok, Cachex.put!(:tc, token, true)}
         {:error, msg} -> {:error, msg}
       end
     end
   end
 
-  def build_info(project_id, branch, revision, build_info \\ &TcCache.Store.build_info/3) do
+  def build_info(project_id, branch, revision, build_info \\ &TcCache.Teamcity.Store.build_info/3) do
     builds = build_info.(project_id, branch, revision)
 
     links = %{overview: overview_link(project_id, branch)}
@@ -55,7 +55,7 @@ defmodule TcCache.Api do
   defp overview_link(project_id, "master"), do: overview_link(project_id, "%3Cdefault%3E")
 
   defp overview_link(project_id, branch) do
-    Application.get_env(:tc_cache, TcCache.Source)[:host]
+    Application.get_env(:tc_cache, TcCache.Teamcity.Source)[:host]
     |> URI.merge("/project.html?projectId=#{project_id}&branch=#{branch}")
     |> URI.to_string()
   end

@@ -21,7 +21,7 @@ config :tc_cache, TcCache.Repo,
 
 config :tc_cache, TcCache.Sync.Scheduler, enabled: false
 
-config :tc_cache, TcCache.Source,
+config :tc_cache, TcCache.Teamcity.Source,
   host: "https://example.com",
   username: "username-val",
   password: "password-val",

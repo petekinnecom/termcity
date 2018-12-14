@@ -1,13 +1,14 @@
-defmodule TcCache.StoreTest do
+defmodule TcCache.Teamcity.StoreTest do
   use TcCache.DataCase
   require IEx
 
   alias TcCache.Store
 
   describe "usage" do
-    alias TcCache.Fixtures
-    alias TcCache.Store.Build
-    alias TcCache.Store.BuildType
+    alias TcCache.Teamcity.Fixtures
+    alias TcCache.Teamcity.Store.Build
+    alias TcCache.Teamcity.Store.BuildType
+    alias TcCache.Teamcity.Store
 
     test "find branch builds limits one (latest) result per build" do
       {3, _} =

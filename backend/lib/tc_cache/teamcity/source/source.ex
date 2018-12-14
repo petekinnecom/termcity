@@ -1,8 +1,5 @@
-defmodule TcCache.Source do
-  # alias TcCache.Source.Teamcity.Authentication
-  # alias TcCache.Source.Teamcity.BuildTypes
-  # alias TcCache.Source.Teamcity.Builds
-  alias TcCache.Source.Teamcity
+defmodule TcCache.Teamcity.Source do
+  alias TcCache.Teamcity.Source
   require Logger
 
   @github_org_path "https://api.github.com/user/orgs"
@@ -32,7 +29,7 @@ defmodule TcCache.Source do
       hackney: [basic_auth: {cfg.username, cfg.password}],
       recv_timeout: 20_000
     )
-    |> Teamcity.Builds.process()
+    |> Source.Builds.process()
   end
 
   def fetch_build_types(get \\ &HTTPoison.get!/3) do
@@ -44,7 +41,7 @@ defmodule TcCache.Source do
       hackney: [basic_auth: {cfg.username, cfg.password}],
       recv_timeout: 20_000
     )
-    |> Teamcity.BuildTypes.process()
+    |> Source.BuildTypes.process()
   end
 
   @doc """
@@ -55,7 +52,7 @@ defmodule TcCache.Source do
 
     ## Examples
 
-        iex> TcCache.Source.build_locators(%{state: "finished", since: ~N[2000-01-01 23:00:07], count: 300, lookupLimit: 5000})
+        iex> TcCache.Teamcity.Source.build_locators(%{state: "finished", since: ~N[2000-01-01 23:00:07], count: 300, lookupLimit: 5000})
         %{
           branch: "(default:any)",
           count: 300,
@@ -66,7 +63,7 @@ defmodule TcCache.Source do
           lookupLimit: 5000,
         }
 
-        iex> TcCache.Source.build_locators(%{count: 300})
+        iex> TcCache.Teamcity.Source.build_locators(%{count: 300})
         %{
           branch: "(default:any)",
           count: 300,
@@ -111,7 +108,7 @@ defmodule TcCache.Source do
       ],
       []
     )
-    |> Teamcity.Authentication.process()
+    |> Source.Authentication.process()
   end
 
   defp join(host, path) do
@@ -128,10 +125,10 @@ defmodule TcCache.Source do
   end
 
   defp config() do
-    %TcCache.Source.Config{
-      host: Application.get_env(:tc_cache, TcCache.Source)[:host],
-      username: Application.get_env(:tc_cache, TcCache.Source)[:username],
-      password: Application.get_env(:tc_cache, TcCache.Source)[:password]
+    %TcCache.Teamcity.Source.Config{
+      host: Application.get_env(:tc_cache, TcCache.Teamcity.Source)[:host],
+      username: Application.get_env(:tc_cache, TcCache.Teamcity.Source)[:username],
+      password: Application.get_env(:tc_cache, TcCache.Teamcity.Source)[:password]
     }
   end
 

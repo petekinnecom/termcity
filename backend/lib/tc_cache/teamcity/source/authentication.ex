@@ -1,4 +1,4 @@
-defmodule TcCache.Source.Teamcity.Authentication do
+defmodule TcCache.Teamcity.Source.Authentication do
   def process(%{status_code: 200, body: body}) do
     is_member = body |> Poison.decode!() |> org_member?(authorized_org())
 
@@ -17,6 +17,6 @@ defmodule TcCache.Source.Teamcity.Authentication do
   defp org_member?([], _), do: false
 
   defp authorized_org do
-    Application.get_env(:tc_cache, TcCache.Source)[:github_org]
+    Application.get_env(:tc_cache, TcCache.Teamcity.Source)[:github_org]
   end
 end

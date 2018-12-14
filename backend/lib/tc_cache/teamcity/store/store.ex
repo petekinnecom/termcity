@@ -1,9 +1,9 @@
-defmodule TcCache.Store do
+defmodule TcCache.Teamcity.Store do
   import Ecto.Query, warn: false
   alias TcCache.Repo
 
-  alias TcCache.Store.BuildType
-  alias TcCache.Store.Build
+  alias TcCache.Teamcity.Store.BuildType
+  alias TcCache.Teamcity.Store.Build
 
   def build_info(project_id, branch_name, nil) do
     build_numbers =

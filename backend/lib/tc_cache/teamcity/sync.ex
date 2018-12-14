@@ -1,9 +1,9 @@
-defmodule TcCache.Sync do
+defmodule TcCache.Teamcity.Sync do
   require Logger
 
-  alias TcCache.Source
-  alias TcCache.Sync
-  alias TcCache.Store
+  alias TcCache.Teamcity.Source
+  alias TcCache.Teamcity.Sync
+  alias TcCache.Teamcity.Store
   @expiration_seconds -60 * 60 * 24 * 7
   @sync_builds_since_seconds -60 * 20
 

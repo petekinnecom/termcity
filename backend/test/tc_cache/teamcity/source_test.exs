@@ -1,7 +1,7 @@
-defmodule TcCache.SourceTest do
+defmodule TcCache.Teamcity.SourceTest do
   use ExUnit.Case
-  alias TcCache.Source
-  doctest TcCache.Source
+  alias TcCache.Teamcity.Source
+  doctest TcCache.Teamcity.Source
 
   test "authenticate: valid token, org member" do
     headers = [{"Authorization", "token token-value"}]
@@ -155,7 +155,7 @@ defmodule TcCache.SourceTest do
     assert {:error, :server_not_happy} = Source.fetch_builds(%{state: "queued", count: 100}, get)
   end
 
-  defp dummy_get(code, headers, body, options \\ []) do
+  defp dummy_get(code, headers, body, options) do
     fn _, h, o ->
       assert [] == headers -- h
       assert [] == options -- o

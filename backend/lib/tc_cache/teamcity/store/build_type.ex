@@ -1,4 +1,4 @@
-defmodule TcCache.Store.BuildType do
+defmodule TcCache.Teamcity.Store.BuildType do
   use Ecto.Schema
   import Ecto.Changeset
 

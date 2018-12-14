@@ -1,4 +1,4 @@
-defmodule TcCache.Fixtures.Store do
+defmodule TcCache.Teamcity.Fixtures.Store do
   def build_type_attrs(id) when is_binary(id) do
     %{
       tc_id: "build_type_id_#{id}",

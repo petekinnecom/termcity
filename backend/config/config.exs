@@ -23,12 +23,7 @@ config :logger, :console,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-config :tc_cache, TcCache.Source,
-  host: System.get_env("TC_HOST"),
-  username: System.get_env("TC_USERNAME"),
-  password: System.get_env("TC_PASSWORD")
-
-config :tc_cache, TcCache.Source,
+config :tc_cache, TcCache.Teamcity.Source,
   host: System.get_env("TC_HOST"),
   username: System.get_env("TC_USERNAME"),
   password: System.get_env("TC_PASSWORD"),
