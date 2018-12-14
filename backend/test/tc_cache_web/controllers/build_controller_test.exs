@@ -63,22 +63,18 @@ defmodule TcCacheWeb.BuildControllerTest do
           "id" => 1,
           "project_name" => "project_name",
           "sha" => "gitsha",
-          "state" => "running",
-          "status" => "SUCCESS",
+          "status" => "running",
           "web_url" => "some tc_web_url",
-          "re_enqueued" => false,
-          "failed_to_start" => false
+          "re_enqueued" => false
         },
         %{
           "build_type" => "build_type_name_2",
           "id" => 2,
           "project_name" => "project_name",
           "sha" => "gitsha",
-          "state" => "running",
-          "status" => "SUCCESS",
+          "status" => "running",
           "web_url" => "some tc_web_url",
-          "re_enqueued" => false,
-          "failed_to_start" => false
+          "re_enqueued" => false
         }
       ]
     }

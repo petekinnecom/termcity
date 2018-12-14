@@ -79,7 +79,32 @@ defmodule TcCache.Teamcity.Store do
         }
       )
     )
+    |> Enum.map(&reduce_build/1)
   end
+
+  defp reduce_build(db_build) do
+    status = calc_status(
+      db_build.state,
+      db_build.status,
+      db_build.failed_to_start
+    )
+
+    %{
+      id: db_build.id,
+      sha: db_build.sha,
+      web_url: db_build.web_url,
+      build_type: db_build.build_type,
+      project_name: db_build.project_name,
+    }
+    |> Map.merge(%{status: status})
+  end
+
+  defp calc_status("queued", _, _), do: "queued"
+  defp calc_status("running", "FAILURE", _), do: "failing"
+  defp calc_status("running", "SUCCESS", _), do: "running"
+  defp calc_status(_, _, true), do: "failstrt"
+  defp calc_status(_, "FAILURE", false), do: "failed"
+  defp calc_status(_, _, false), do: "success"
 
   def get_build_type!(id), do: Repo.get!(BuildType, id)
 

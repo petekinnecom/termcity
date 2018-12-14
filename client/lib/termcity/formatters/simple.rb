@@ -5,22 +5,13 @@ module Termcity
     class Simple
       include Utils::Color
 
-      STATUSES = {
-        queued: "queued",
-        failing: "failing",
-        running: "running",
-        failed_to_start: "failstrt",
-        failed: "failed",
-        success: "success"
-      }
-
       COLORS = {
-        failing: :red,
-        queued: :yellow,
-        running: :blue,
-        failed_to_start: :default,
-        failed: :red,
-        success: :green
+        "failing" => :red,
+        "queued" => :yellow,
+        "running" => :blue,
+        "failstrt" => :default,
+        "failed" => :red,
+        "success" => :green
       }
 
       attr_reader :io
@@ -41,8 +32,8 @@ module Termcity
         @io.puts(summarize(summary, rows))
       end
 
-      def status_string(type:, re_enqueued:)
-        name = STATUSES.fetch(type)
+      def status_string(build)
+        name = build.fetch("status")
         name = "#{name},q" if re_enqueued
         color = COLORS[type]
 
@@ -79,7 +70,7 @@ module Termcity
           ["Success", summary.counts[:success]],
           ["Failure", summary.counts[:failure]],
           ["Running", summary.counts[:running]],
-          ["FailedToStart", summary.counts[:failed_to_start]],
+          ["FailedToStart", summary.counts[:failstrt]],
           ["Queued", summary.counts[:queued]],
           ["Re-Queued", summary.counts[:re_enqueued]]
         ]

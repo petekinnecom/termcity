@@ -77,20 +77,16 @@ defmodule TcCache.Teamcity.StoreTest do
           id: 4,
           project_name: "project_name",
           sha: "gitsha",
-          state: "finished",
-          status: "SUCCESS",
-          web_url: "some tc_web_url",
-          failed_to_start: false
+          status: "success",
+          web_url: "some tc_web_url"
         },
         %{
           build_type: "build_type_name_2",
           id: 3,
           project_name: "project_name",
           sha: "gitsha",
-          state: "finished",
-          status: "SUCCESS",
-          web_url: "some tc_web_url",
-          failed_to_start: false
+          status: "success",
+          web_url: "some tc_web_url"
         }
       ]
 
@@ -150,24 +146,122 @@ defmodule TcCache.Teamcity.StoreTest do
           id: 1,
           project_name: "project_name",
           sha: "gitsha_newer",
-          state: "finished",
-          status: "SUCCESS",
-          web_url: "some tc_web_url",
-          failed_to_start: false
+          status: "success",
+          web_url: "some tc_web_url"
         },
         %{
           build_type: "build_type_name_2",
           id: 4,
           project_name: "project_name",
           sha: "gitsha_newer",
-          state: "finished",
-          status: "SUCCESS",
-          web_url: "some tc_web_url",
-          failed_to_start: false
+          status: "success",
+          web_url: "some tc_web_url"
         }
       ]
 
       assert expected == Store.build_info("project_id", "myBranch", nil)
+    end
+
+    test "calculates status correctly" do
+      {6, _} =
+        Store.upsert_build_types([
+          Fixtures.Store.build_type_attrs(%{
+            tc_id: "build_type_id_1",
+            tc_name: "build_type_name_1",
+            tc_project_id: "project_id",
+            tc_project_name: "project_name"
+          }),
+          Fixtures.Store.build_type_attrs(%{
+            tc_id: "build_type_id_2",
+            tc_name: "build_type_name_2",
+            tc_project_id: "project_id",
+            tc_project_name: "project_name"
+          }),
+          Fixtures.Store.build_type_attrs(%{
+            tc_id: "build_type_id_3",
+            tc_name: "build_type_name_3",
+            tc_project_id: "project_id",
+            tc_project_name: "project_name"
+          }),
+          Fixtures.Store.build_type_attrs(%{
+            tc_id: "build_type_id_4",
+            tc_name: "build_type_name_4",
+            tc_project_id: "project_id",
+            tc_project_name: "project_name"
+          }),
+          Fixtures.Store.build_type_attrs(%{
+            tc_id: "build_type_id_5",
+            tc_name: "build_type_name_5",
+            tc_project_id: "project_id",
+            tc_project_name: "project_name"
+          }),
+          Fixtures.Store.build_type_attrs(%{
+            tc_id: "build_type_id_6",
+            tc_name: "build_type_name_6",
+            tc_project_id: "project_id",
+            tc_project_name: "project_name"
+          }),
+        ])
+
+      {6, _} =
+        Store.upsert_builds([
+          Fixtures.Store.build_attrs(%{
+            tc_id: 1,
+            tc_branch_name: "myBranch",
+            tc_build_type_id: "build_type_id_1",
+            tc_state: "running",
+            tc_status: "FAILURE"
+          }),
+          Fixtures.Store.build_attrs(%{
+            tc_id: 2,
+            tc_branch_name: "myBranch",
+            tc_build_type_id: "build_type_id_2",
+            tc_state: "finished",
+            tc_status: "FAILURE"
+          }),
+          Fixtures.Store.build_attrs(%{
+            tc_id: 3,
+            tc_branch_name: "myBranch",
+            tc_build_type_id: "build_type_id_3",
+            tc_state: "running",
+            tc_status: "SUCCESS"
+          }),
+          Fixtures.Store.build_attrs(%{
+            tc_id: 4,
+            tc_branch_name: "myBranch",
+            tc_build_type_id: "build_type_id_4",
+            tc_state: "finished",
+            tc_status: "SUCCESS"
+          }),
+          Fixtures.Store.build_attrs(%{
+            tc_id: 5,
+            tc_branch_name: "myBranch",
+            tc_build_type_id: "build_type_id_5",
+            tc_state: "queued",
+          }),
+          Fixtures.Store.build_attrs(%{
+            tc_id: 6,
+            tc_branch_name: "myBranch",
+            tc_build_type_id: "build_type_id_6",
+            tc_state: "finished",
+            tc_failed_to_start: true
+          }),
+        ])
+
+        expected_statuses = [
+          "failing",
+          "failed",
+          "running",
+          "success",
+          "queued",
+          "failstrt"
+        ]
+
+        actual_statuses =
+          Store.build_info("project_id", "myBranch", nil)
+          |> Enum.map(fn(b) -> b.status end)
+
+        assert expected_statuses == actual_statuses
     end
 
     test "fetches ran/running builds AND queued builds (without a revision because they haven't started)" do
@@ -213,20 +307,16 @@ defmodule TcCache.Teamcity.StoreTest do
           id: 2,
           project_name: "project_name",
           sha: "gitsha",
-          state: "finished",
-          status: "SUCCESS",
-          web_url: "some tc_web_url",
-          failed_to_start: false
+          status: "success",
+          web_url: "some tc_web_url"
         },
         %{
           build_type: "build_type_name_1",
           id: 3,
           project_name: "project_name",
           sha: nil,
-          state: "queued",
-          status: nil,
-          web_url: "some tc_web_url",
-          failed_to_start: false
+          status: "queued",
+          web_url: "some tc_web_url"
         }
       ]
 

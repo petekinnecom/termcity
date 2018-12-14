@@ -11,15 +11,15 @@ module Termcity
       end
 
       def format(summary)
-        rows = summary.builds.map do |raw:, status:|
+        rows = summary.builds.map do |build|
           cols = []
 
-          text = simple_formatter.status_string(status) { |t|
-            "#{linkify(t, raw.fetch("web_url"))}#{" "*(10-t.length)}"
+          text = simple_formatter.status_string(build) { |t|
+            "#{linkify(t, build.fetch("web_url"))}#{" "*(10-t.length)}"
           }
 
-          cols << linkify(text, raw.fetch("web_url"))
-          cols << raw.fetch("build_type")
+          cols << linkify(text, build.fetch("web_url"))
+          cols << build.fetch("build_type")
           cols.join(" ")
         end
 
