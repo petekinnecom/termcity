@@ -66,7 +66,8 @@ defmodule TcCacheWeb.BuildControllerTest do
           "state" => "running",
           "status" => "SUCCESS",
           "web_url" => "some tc_web_url",
-          "re_enqueued" => false
+          "re_enqueued" => false,
+          "failed_to_start" => false
         },
         %{
           "build_type" => "build_type_name_2",
@@ -76,7 +77,8 @@ defmodule TcCacheWeb.BuildControllerTest do
           "state" => "running",
           "status" => "SUCCESS",
           "web_url" => "some tc_web_url",
-          "re_enqueued" => false
+          "re_enqueued" => false,
+          "failed_to_start" => false
         }
       ]
     }

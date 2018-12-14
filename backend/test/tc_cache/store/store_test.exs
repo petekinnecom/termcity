@@ -78,7 +78,8 @@ defmodule TcCache.StoreTest do
           sha: "gitsha",
           state: "finished",
           status: "SUCCESS",
-          web_url: "some tc_web_url"
+          web_url: "some tc_web_url",
+          failed_to_start: false
         },
         %{
           build_type: "build_type_name_2",
@@ -87,7 +88,8 @@ defmodule TcCache.StoreTest do
           sha: "gitsha",
           state: "finished",
           status: "SUCCESS",
-          web_url: "some tc_web_url"
+          web_url: "some tc_web_url",
+          failed_to_start: false
         }
       ]
 
@@ -149,7 +151,8 @@ defmodule TcCache.StoreTest do
           sha: "gitsha_newer",
           state: "finished",
           status: "SUCCESS",
-          web_url: "some tc_web_url"
+          web_url: "some tc_web_url",
+          failed_to_start: false
         },
         %{
           build_type: "build_type_name_2",
@@ -158,7 +161,8 @@ defmodule TcCache.StoreTest do
           sha: "gitsha_newer",
           state: "finished",
           status: "SUCCESS",
-          web_url: "some tc_web_url"
+          web_url: "some tc_web_url",
+          failed_to_start: false
         }
       ]
 
@@ -210,7 +214,8 @@ defmodule TcCache.StoreTest do
           sha: "gitsha",
           state: "finished",
           status: "SUCCESS",
-          web_url: "some tc_web_url"
+          web_url: "some tc_web_url",
+          failed_to_start: false
         },
         %{
           build_type: "build_type_name_1",
@@ -219,7 +224,8 @@ defmodule TcCache.StoreTest do
           sha: nil,
           state: "queued",
           status: nil,
-          web_url: "some tc_web_url"
+          web_url: "some tc_web_url",
+          failed_to_start: false
         }
       ]
 
