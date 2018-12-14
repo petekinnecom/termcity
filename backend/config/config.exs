@@ -26,7 +26,9 @@ config :logger, :console,
 config :tc_cache, TcCache.Teamcity.Source,
   host: System.get_env("TC_HOST"),
   username: System.get_env("TC_USERNAME"),
-  password: System.get_env("TC_PASSWORD"),
+  password: System.get_env("TC_PASSWORD")
+
+config :tc_cache, TcCache.Authentication,
   github_org: System.get_env("TC_GITHUB_ORG")
 
 import_config "#{Mix.env()}.exs"

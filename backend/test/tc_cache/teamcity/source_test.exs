@@ -3,38 +3,6 @@ defmodule TcCache.Teamcity.SourceTest do
   alias TcCache.Teamcity.Source
   doctest TcCache.Teamcity.Source
 
-  test "authenticate: valid token, org member" do
-    headers = [{"Authorization", "token token-value"}]
-
-    body = [
-      %{"login" => "something else"},
-      %{"login" => "myOrg"}
-    ]
-
-    get = dummy_get(200, headers, body)
-
-    assert {:ok, true} == Source.authenticate("token-value", get)
-  end
-
-  test "authenticate: valid token, not org member" do
-    headers = [{"Authorization", "token token-value"}]
-
-    body = [
-      %{"login" => "something else"},
-      %{"login" => "something else 2"}
-    ]
-
-    get = dummy_get(200, headers, body)
-    assert {:error, :not_member} == Source.authenticate("token-value", get)
-  end
-
-  test "authenticate: invalid token" do
-    headers = [{"Authorization", "token token-value"}]
-
-    get = dummy_get(401, headers, [])
-    assert {:error, :token_failure} == Source.authenticate("token-value", get)
-  end
-
   test "fetch_build_types: multiple buildTypes" do
     headers = [{"Accept", "application/json"}]
     options = [hackney: [basic_auth: {"username-val", "password-val"}]]

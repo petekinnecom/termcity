@@ -2,7 +2,6 @@ defmodule TcCache.Teamcity.Source do
   alias TcCache.Teamcity.Source
   require Logger
 
-  @github_org_path "https://api.github.com/user/orgs"
   @build_types_path "app/rest/buildTypes"
 
   @default_locators %{
@@ -98,18 +97,6 @@ defmodule TcCache.Teamcity.Source do
   end
 
   def build_locators(l), do: Enum.into(l, @default_locators)
-
-  def authenticate(token, get \\ &HTTPoison.get!/3) do
-    get.(
-      @github_org_path,
-      [
-        {"Accept", "application/json"},
-        {"Authorization", "token #{token}"}
-      ],
-      []
-    )
-    |> Source.Authentication.process()
-  end
 
   defp join(host, path) do
     URI.merge(host, path) |> URI.to_string()
