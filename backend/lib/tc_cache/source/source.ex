@@ -1,7 +1,8 @@
 defmodule TcCache.Source do
-  alias TcCache.Source.Authentication
-  alias TcCache.Source.BuildTypes
-  alias TcCache.Source.Builds
+  # alias TcCache.Source.Teamcity.Authentication
+  # alias TcCache.Source.Teamcity.BuildTypes
+  # alias TcCache.Source.Teamcity.Builds
+  alias TcCache.Source.Teamcity
   require Logger
 
   @github_org_path "https://api.github.com/user/orgs"
@@ -31,7 +32,7 @@ defmodule TcCache.Source do
       hackney: [basic_auth: {cfg.username, cfg.password}],
       recv_timeout: 20_000
     )
-    |> Builds.process()
+    |> Teamcity.Builds.process()
   end
 
   def fetch_build_types(get \\ &HTTPoison.get!/3) do
@@ -43,7 +44,7 @@ defmodule TcCache.Source do
       hackney: [basic_auth: {cfg.username, cfg.password}],
       recv_timeout: 20_000
     )
-    |> BuildTypes.process()
+    |> Teamcity.BuildTypes.process()
   end
 
   @doc """
@@ -110,7 +111,7 @@ defmodule TcCache.Source do
       ],
       []
     )
-    |> Authentication.process()
+    |> Teamcity.Authentication.process()
   end
 
   defp join(host, path) do

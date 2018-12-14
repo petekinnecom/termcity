@@ -1,12 +1,12 @@
-defmodule TcCache.Source.BuildTypes do
+defmodule TcCache.Source.Teamcity.Builds do
   def process(%{status_code: 200, body: body}) do
-    build_types =
+    builds =
       body
       |> Poison.decode!()
-      |> get_in(["buildType"])
+      |> get_in(["build"])
       |> List.wrap()
 
-    {:ok, build_types}
+    {:ok, builds}
   end
 
   def process(_), do: {:error, :server_not_happy}

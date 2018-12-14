@@ -1,4 +1,4 @@
-defmodule TcCache.Source.Authentication do
+defmodule TcCache.Source.Teamcity.Authentication do
   def process(%{status_code: 200, body: body}) do
     is_member = body |> Poison.decode!() |> org_member?(authorized_org())
 
