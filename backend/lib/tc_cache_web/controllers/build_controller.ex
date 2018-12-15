@@ -2,7 +2,7 @@ defmodule TcCacheWeb.BuildController do
   use TcCacheWeb, :controller
   require Logger
 
-  def index(conn, params = %{"project_id" => project_id, "branch" => branch}, api) do
+  def index(conn, params = %{"project_id" => project_id, "branch" => branch, "reponame" => reponame}, api) do
     auth_header = Plug.Conn.get_req_header(conn, "authorization")
 
     case auth_header do
@@ -15,7 +15,7 @@ defmodule TcCacheWeb.BuildController do
 
         build_info_task =
           Task.async(fn ->
-            api.build_info(project_id, branch, params["revision"])
+            api.build_info(project_id, reponame, branch, params["revision"])
           end)
 
         case Task.await(auth_task) do

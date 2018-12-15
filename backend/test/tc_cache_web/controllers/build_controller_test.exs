@@ -5,8 +5,8 @@ defmodule TcCacheWeb.BuildControllerTest do
     def authenticate("valid_token"), do: {:ok, true}
     def authenticate("invalid_token"), do: {:error, :nope}
 
-    def build_info(project_id, branch, revision),
-      do: TcCache.Api.build_info(project_id, branch, revision)
+    def build_info(project_id, reponame, branch, revision),
+      do: TcCache.Api.build_info(project_id, reponame, branch, revision)
   end
 
   test "GET builds?mybranch with auth", %{conn: conn} do
@@ -48,14 +48,15 @@ defmodule TcCacheWeb.BuildControllerTest do
       conn
       |> Plug.Conn.put_req_header("authorization", "valid_token")
       |> TcCacheWeb.BuildController.index(
-        %{"project_id" => "project_id", "branch" => "myBranch"},
+        %{"project_id" => "project_id", "branch" => "myBranch", "reponame" => "reponame_1"},
         DummyApi
       )
       |> json_response(200)
 
     expected = %{
       "links" => %{
-        "overview" => "https://example.com/project.html?projectId=project_id&branch=myBranch"
+        "teamcity_overview" => "https://example.com/project.html?projectId=project_id&branch=myBranch",
+        "circle_overview" => "https://circleci.com/myorg/workflows/reponame_1/tree/myBranch"
       },
       "builds" => [
         %{
@@ -86,7 +87,7 @@ defmodule TcCacheWeb.BuildControllerTest do
     conn
     |> Plug.Conn.put_req_header("authorization", "invalid_token")
     |> TcCacheWeb.BuildController.index(
-      %{"project_id" => "project_id", "branch" => "myBranch"},
+      %{"project_id" => "project_id", "branch" => "myBranch", "reponame" => "repo_1"},
       DummyApi
     )
     |> response(401)

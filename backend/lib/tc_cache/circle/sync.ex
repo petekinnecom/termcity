@@ -35,6 +35,7 @@ defmodule TcCache.Circle.Sync do
       cir_job_name: build["workflows"]["job_name"],
       cir_status: build["status"],
       cir_build_url: build["build_url"],
+      cir_reponame: build["reponame"]
     }
   end
 end

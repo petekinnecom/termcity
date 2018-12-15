@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Pete Kinnecom"]
   spec.email         = ["git@k7u7.com"]
 
-  spec.summary       = %q{Terminal view of TeamCity}
-  spec.description   = %q{See TeamCity build status for a branch in your terminal. Pipe it to grep or whatever. Get nicely formatted links if you use iTerm2.}
+  spec.summary       = %q{Terminal view of TeamCity/CircleCI}
+  spec.description   = %q{See TeamCity/CircleCI build status for a branch in your terminal. Pipe it to grep or whatever. Get nicely formatted links if you use iTerm2.}
   # spec.homepage      = "none"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

@@ -19,8 +19,8 @@ module Termcity
       @host = host
     end
 
-    def summary(branch:, project_id:, revision:)
-      path = "/builds?branch=#{branch}&project_id=#{project_id}"
+    def summary(branch:, project_id:, revision:, reponame:)
+      path = "/builds?branch=#{branch}&project_id=#{project_id}&reponame=#{reponame}"
       path = "#{path}&revision=#{revision}" if revision
       url = URI.join(@host, path).to_s
       get(url)

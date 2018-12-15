@@ -20,22 +20,22 @@ module Termcity
       end
 
       def format(summary)
-        rows = summary.builds.map do |raw:, status:|
+        rows = summary.builds.map { |build|
           cols = []
-          cols << status_string(status)
-          cols << raw.fetch("build_type")
-          cols << raw.fetch("web_url")
+          cols << status_string(build)
+          cols << build.fetch("build_type")
+          cols << build.fetch("web_url")
 
           cols.join(" : ")
-        end
+        }
 
         @io.puts(summarize(summary, rows))
       end
 
       def status_string(build)
         name = build.fetch("status")
-        name = "#{name},q" if re_enqueued
-        color = COLORS[type]
+        name = "#{name},q" if build.fetch("re_enqueued")
+        color = COLORS[build.fetch("status")]
 
         text =
           if block_given?
@@ -53,12 +53,13 @@ module Termcity
           "This revision may still be in the queue (or may be unkown/old)"
         else
 
-          revision = summary.builds.map {|b| b.dig(:raw, "sha")}.compact.first
+          revision = summary.builds.map {|b| b.dig("sha")}.compact.first
           [
             rows,
             "",
             "Revision: #{revision}",
-            "Overview: #{summary.overview_link}",
+            "Teamcity Overview: #{summary.teamcity_link}",
+            "CircleCI Overview: #{summary.circle_link}",
             counts(summary),
           ].join("\n")
         end

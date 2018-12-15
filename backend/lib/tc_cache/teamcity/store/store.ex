@@ -5,8 +5,8 @@ defmodule TcCache.Teamcity.Store do
   alias TcCache.Teamcity.Store.BuildType
   alias TcCache.Teamcity.Store.Build
 
-  def build_info(project_id, branch_name, nil) do
-    build_numbers =
+  def latest_revision(project_id, branch_name) do
+    revisions =
       Repo.all(
         from(b in Build,
           select: b.tc_number,
@@ -16,10 +16,14 @@ defmodule TcCache.Teamcity.Store do
         )
       )
 
-    case build_numbers do
-      [] -> build_info_query(project_id, branch_name, nil)
-      [bn] -> build_info_query(project_id, branch_name, bn)
+    case revisions do
+      [] -> nil
+      [rev] -> rev
     end
+  end
+
+  def build_info(project_id, branch_name, nil) do
+    build_info_query(project_id, branch_name, latest_revision(project_id, branch_name))
   end
 
   def build_info(project_id, branch_name, revision) do
@@ -103,7 +107,9 @@ defmodule TcCache.Teamcity.Store do
   defp calc_status("running", "FAILURE", _), do: "failing"
   defp calc_status("running", "SUCCESS", _), do: "running"
   defp calc_status(_, _, true), do: "failstrt"
+  defp calc_status(_, "FAILURE", nil), do: "failed"
   defp calc_status(_, "FAILURE", false), do: "failed"
+  defp calc_status(_, _, nil), do: "success"
   defp calc_status(_, _, false), do: "success"
 
   def get_build_type!(id), do: Repo.get!(BuildType, id)

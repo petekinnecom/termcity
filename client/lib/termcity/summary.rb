@@ -1,10 +1,11 @@
 module Termcity
   class Summary
-    def initialize(revision:, api:, branch:, project_id:)
+    def initialize(revision:, api:, branch:, project_id:, reponame:)
       @branch = branch
       @project_id = project_id
       @api = api
       @revision = revision
+      @reponame = reponame
     end
 
     def builds
@@ -15,8 +16,12 @@ module Termcity
       data[:counts]
     end
 
-    def overview_link
-      data.dig(:links, :overview)
+    def teamcity_link
+      data.dig(:links, :teamcity_overview)
+    end
+
+    def circle_link
+      data.dig(:links, :circle_overview)
     end
 
     def data
@@ -32,14 +37,22 @@ module Termcity
           re_enqueued: 0,
         }
 
-        summary = @api.summary(branch: @branch, project_id: @project_id, revision: @revision)
+        summary = @api.summary(
+          branch: @branch,
+          project_id: @project_id,
+          revision: @revision,
+          reponame: @reponame
+        )
 
         builds = summary.fetch("builds")
           .sort_by {|b| b.fetch("build_type")}
           .map {|b| summarize(b, counts) }
 
         {
-          links: {overview: summary.dig("links", "overview")},
+          links: {
+            teamcity_overview: summary.dig("links", "teamcity_overview"),
+            circle_overview: summary.dig("links", "circle_overview")
+          },
           builds: builds,
           counts: counts
         }
@@ -47,8 +60,6 @@ module Termcity
     end
 
     def summarize(build, counts)
-      status = status(build)
-
       count_type =
         if ["failing", "failed"].include?(build.fetch("status"))
           :failure
@@ -58,6 +69,7 @@ module Termcity
       counts[count_type] += 1
       counts[:total] += 1
       counts[:re_enqueued] +=1 if build.fetch("re_enqueued")
+      build
     end
   end
 end

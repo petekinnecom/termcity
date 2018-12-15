@@ -10,12 +10,13 @@ module Termcity
       new(**args).simple_format
     end
 
-    def initialize(branch:, token:, host:, project_id:, revision:)
+    def initialize(branch:, token:, host:, project_id:, revision:, reponame:)
       @branch = branch
       @token = token
       @host = host
       @project_id = project_id
       @revision = revision
+      @reponame = reponame
     end
 
     def simple_format
@@ -29,6 +30,7 @@ module Termcity
         branch: @branch,
         revision: @revision,
         project_id: @project_id,
+        reponame: @reponame,
       )
 
       formatter =

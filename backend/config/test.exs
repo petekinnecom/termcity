@@ -28,3 +28,8 @@ config :tc_cache, TcCache.Teamcity.Source,
 
 config :tc_cache, TcCache.Authentication,
   github_org: "myOrg"
+
+  config :tc_cache, TcCache.Circle.Source,
+  token: "token",
+  ui_url: "https://circleci.com/myorg",
+  api_url: "https://circleci.com/api/v1.1/"

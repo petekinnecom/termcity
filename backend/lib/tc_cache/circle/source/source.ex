@@ -2,8 +2,6 @@ defmodule TcCache.Circle.Source do
   require Logger
   alias TcCache.Circle.Source.Builds
 
-  @host "https://circleci.appf.io/api/v1.1/"
-
   @default_filters %{
     "limit" => 100,
     "shallow" => true
@@ -15,7 +13,7 @@ defmodule TcCache.Circle.Source do
     |> Map.merge(%{"circle-token" => token()})
 
     get.(
-      join(@host, "recent-builds"),
+      join(host(), "recent-builds"),
       [{"Accept", "application/json"}],
       recv_timeout: 20_000,
       params: params
@@ -29,5 +27,9 @@ defmodule TcCache.Circle.Source do
 
   defp token do
     Application.get_env(:tc_cache, TcCache.Circle.Source)[:token]
+  end
+
+  defp host do
+    Application.get_env(:tc_cache, TcCache.Circle.Source)[:api_url]
   end
 end

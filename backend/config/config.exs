@@ -29,7 +29,9 @@ config :tc_cache, TcCache.Teamcity.Source,
   password: System.get_env("TC_TEAMCITY_PASSWORD")
 
 config :tc_cache, TcCache.Circle.Source,
-  token: System.get_env("TC_CIRCLE_TOKEN")
+  token: System.get_env("TC_CIRCLE_TOKEN"),
+  api_url: System.get_env("TC_CIRCLE_API_URL"),
+  ui_url: System.get_env("TC_CIRCLE_UI_URL")
 
 config :tc_cache, TcCache.Authentication,
   github_org: System.get_env("TC_GITHUB_ORG")
