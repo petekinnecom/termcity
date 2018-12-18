@@ -5,7 +5,7 @@ defmodule TcCache.Teamcity.Store do
   alias TcCache.Teamcity.Store.BuildType
   alias TcCache.Teamcity.Store.Build
 
-  def latest_revision(project_id, branch_name) do
+  def latest_revision(_project_id, branch_name) do
     revisions =
       Repo.all(
         from(b in Build,
@@ -106,7 +106,7 @@ defmodule TcCache.Teamcity.Store do
   defp calc_status("queued", _, _), do: "queued"
   defp calc_status("running", "FAILURE", _), do: "failing"
   defp calc_status("running", "SUCCESS", _), do: "running"
-  defp calc_status(_, _, true), do: "failstrt"
+  defp calc_status(_, _, true), do: "not_run"
   defp calc_status(_, "FAILURE", nil), do: "failed"
   defp calc_status(_, "FAILURE", false), do: "failed"
   defp calc_status(_, _, nil), do: "success"

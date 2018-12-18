@@ -9,7 +9,7 @@ module Termcity
         "failing" => :red,
         "queued" => :yellow,
         "running" => :blue,
-        "failstrt" => :default,
+        "not_run" => :default,
         "failed" => :red,
         "success" => :green
       }
@@ -35,7 +35,7 @@ module Termcity
       def status_string(build)
         name = build.fetch("status")
         name = "#{name},q" if build.fetch("re_enqueued")
-        color = COLORS[build.fetch("status")]
+        color = COLORS[build.fetch("status")] || :default
 
         text =
           if block_given?
@@ -71,7 +71,7 @@ module Termcity
           ["Success", summary.counts[:success]],
           ["Failure", summary.counts[:failure]],
           ["Running", summary.counts[:running]],
-          ["FailedToStart", summary.counts[:failstrt]],
+          ["Not Run", summary.counts[:not_run]],
           ["Queued", summary.counts[:queued]],
           ["Re-Queued", summary.counts[:re_enqueued]]
         ]

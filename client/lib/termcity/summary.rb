@@ -33,7 +33,7 @@ module Termcity
           failure: 0,
           running: 0,
           queued: 0,
-          failstrt: 0,
+          not_run: 0,
           re_enqueued: 0,
         }
 
@@ -66,6 +66,7 @@ module Termcity
         else
           build.fetch("status").to_sym
         end
+      counts[count_type] ||= 0
       counts[count_type] += 1
       counts[:total] += 1
       counts[:re_enqueued] +=1 if build.fetch("re_enqueued")

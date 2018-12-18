@@ -254,7 +254,7 @@ defmodule TcCache.Teamcity.StoreTest do
           "running",
           "success",
           "queued",
-          "failstrt"
+          "not_run"
         ]
 
         actual_statuses =
