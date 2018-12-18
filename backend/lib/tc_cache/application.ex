@@ -21,7 +21,7 @@ defmodule TcCache.Application do
           {TcCache.Teamcity.Sync, :sync_build_types, [], 60 * 60 * 1_000},
           {TcCache.Teamcity.Sync, :expire_builds, [], 60 * 60 * 24 * 1_000},
 
-          {TcCache.Circle.Sync, :sync_builds, [], 60 * 1_000},
+          {TcCache.Circle.Sync, :sync_all_builds, [], 60 * 1_000},
           {TcCache.Circle.Sync, :expire_builds, [], 60 * 60 * 24 * 1_000}
         ]
       ])

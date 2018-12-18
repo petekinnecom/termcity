@@ -1,9 +1,23 @@
+defmodule Parallel do
+end
+
 defmodule TcCache.Circle.Sync do
   require Logger
 
   alias TcCache.Circle.Source
   alias TcCache.Circle.Store
   @expiration_seconds -60 * 60 * 24 * 7
+
+  def sync_all_builds do
+    pmap((0..10), fn(i) -> sync_builds(%{"offset" => 100*i}) end)
+  end
+
+  def pmap(collection, func) do
+    collection
+    |> Enum.map(&(Task.async(fn -> func.(&1) end)))
+    |> Enum.map(&Task.await/1)
+  end
+
 
   def sync_builds(filters \\ %{}) do
     Logger.info("#{__MODULE__}.sync_builds triggered with #{inspect(filters)}")
