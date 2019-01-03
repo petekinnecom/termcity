@@ -33,6 +33,9 @@ config :tc_cache, TcCache.Circle.Source,
   api_url: System.get_env("TC_CIRCLE_API_URL"),
   ui_url: System.get_env("TC_CIRCLE_UI_URL")
 
+config :tc_cache, TcCache.Circle.Sync,
+  num_pages: String.to_integer(System.get_env("TC_CIRCLE_NUM_PAGES") || "3")
+
 config :tc_cache, TcCache.Authentication,
   github_org: System.get_env("TC_GITHUB_ORG")
 

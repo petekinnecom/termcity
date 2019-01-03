@@ -9,13 +9,13 @@ defmodule TcCache.Circle.Sync do
   @expiration_seconds -60 * 60 * 24 * 7
 
   def sync_all_builds do
-    pmap((0..10), fn(i) -> sync_builds(%{"offset" => 100*i}) end)
+    pmap((0..num_pages()), fn(i) -> sync_builds(%{"offset" => 100*i}) end)
   end
 
   def pmap(collection, func) do
     collection
     |> Enum.map(&(Task.async(fn -> func.(&1) end)))
-    |> Enum.map(&Task.await/1)
+    |> Enum.map(fn(t) -> Task.await(t, 55_000) end)
   end
 
 
@@ -51,5 +51,9 @@ defmodule TcCache.Circle.Sync do
       cir_build_url: build["build_url"],
       cir_reponame: build["reponame"]
     }
+  end
+
+  defp num_pages do
+    Application.get_env(:tc_cache, TcCache.Circle.Sync)[:num_pages]
   end
 end
